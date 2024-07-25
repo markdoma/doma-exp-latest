@@ -43,7 +43,7 @@ export default function Home() {
 
   const handleUpdate = async () => {
     try {
-      const range = `Sheet1!A${editItem.index + 2}:C${editItem.index + 2}`;
+      const range = `Sheet1!A${editItem.index + 1}:C${editItem.index + 1}`;
       const response = await fetch('/api/sheets/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
