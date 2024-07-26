@@ -2,7 +2,7 @@ import { getSheetData, appendRow, updateRow, deleteRow } from '../../../../lib/s
 
 export async function POST(req) {
   try {
-    const { operation, range, values } = await req.json();
+    const { operation, range, values, sheetName } = await req.json();
 
     console.log(`Operation: ${operation}, Range: ${range}, Values: ${values}`);
 
@@ -12,7 +12,7 @@ export async function POST(req) {
         result = await getSheetData(range);
         break;
       case 'create':
-        result = await appendRow(values);
+        result = await appendRow(sheetName, values); // This will now append to the specified sheet
         break;
       case 'update':
         result = await updateRow(range, values);

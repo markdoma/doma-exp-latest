@@ -14,7 +14,7 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('/api/sheets/read', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ operation: 'read', range: 'Sheet1!A:C' }) });
+      const response = await fetch('/api/sheets/read', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ operation: 'read', range: 'Sheet1!A:C'  }) });
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
       const result = await response.json();
       setData(result);
@@ -30,7 +30,7 @@ export default function Home() {
       const response = await fetch('/api/sheets/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ operation: 'create', values: [newItem.item, newItem.projected, newItem.actual] }),
+        body: JSON.stringify({ operation: 'create', values: [newItem.item, newItem.projected, newItem.actual], sheetName: 'Sheet1' }),
       });
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
       await fetchData();
