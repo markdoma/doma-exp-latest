@@ -31,3 +31,30 @@ body {
     text-wrap: balance;
   }
 }
+
+/* styles/globals.css */
+.meter-container {
+  position: relative;
+  width: 100%;
+  height: 1.25rem; /* Adjust the height as needed */
+}
+
+.meter-container .meter-value {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #af664c; /* Default color */
+  transition: background-color 0.3s ease;
+}
+
+/* Conditional color styling based on class */
+.meter-container.high .meter-value {
+  background-color: transparent; /* Green color for high values */
+}
+
+.meter-container.low .meter-value {
+  background-color: red; /* Red color for low/negative values */
+}
+

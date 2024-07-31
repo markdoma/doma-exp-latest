@@ -9,7 +9,7 @@ export async function POST(req) {
     let result;
     switch (operation) {
       case 'read':
-        result = await getSheetData(range);
+        result = await getSheetData(sheetName,range);
         break;
       case 'create':
         result = await appendRow(sheetName, values); // This will now append to the specified sheet
