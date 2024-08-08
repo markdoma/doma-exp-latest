@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Modal from '../components/Modal'
 
   // Helper function to get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
@@ -29,6 +30,8 @@ export default function NewExpense() {
     // to_date_expense:'',
     // remaining_budget:''
   });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [expenseDetails, setExpenseDetails] = useState({});
 
 
   useEffect(() => {
@@ -73,6 +76,7 @@ export default function NewExpense() {
           body: JSON.stringify({ operation: 'read', sheetName: 'budget' }),
         });
         const data = await response.json();
+        console.log(data)
         if (response.ok) {
           const parsedData = data.reduce((acc, [category, amount]) => {
             if (category && amount) acc[category] = amount;
@@ -91,12 +95,41 @@ export default function NewExpense() {
   }, []);
 
   useEffect(() => {
+    const fetchMainCategory = async () => {
+      try {
+        const response = await fetch('/api/sheets/read', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ operation: 'read', sheetName: 'budget-category' }),
+        });
+        const data = await response.json();
+        console.log(data)
+        if (response.ok) {
+          const parsedData = data.reduce((acc, [category, main_category]) => {
+            if (category && main_category) acc[category] = main_category;
+            return acc;
+          }, {});
+          setBudgetData(parsedData);
+        } else {
+          console.error('Failed to fetch budget data:', data.error);
+        }
+      } catch (err) {
+        console.error('Error fetching budget data:', err);
+      }
+    };
+
+    fetchMainCategory();
+  }, []);
+
+  useEffect(() => {
     if (formData.category && budgetData[formData.category]) {
       const projectedBudget = budgetData[formData.category];
+      const mainCategory = budgetData[formData.category];
       console.log(projectedBudget)
       setFormData((prevData) => ({
         ...prevData,
         budget: projectedBudget,
+        main_category: mainCategory,
         // remaining_budget: projectedBudget, // Assuming you want to initialize this as well
       }));
     }
@@ -116,11 +149,22 @@ export default function NewExpense() {
         body: JSON.stringify({ operation: 'create', values: Object.values(formData), sheetName: 'expenses' }),
       });
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-      router.push('/report');
+      // const result = await response.json();
+      console.log(formData)
+      // const expense = result.expense; // Adjust based on your API response structure
+      
+      setExpenseDetails(formData);
+      setModalOpen(true); // Open the modal on success
+      console.log(expenseDetails)
+
     } catch (err) {
       console.error('Error creating data:', err);
       setError(err.message);
     }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   const handleGoToReport = () => {
@@ -215,6 +259,20 @@ export default function NewExpense() {
           Add Expense
         </button>
       </form>
+
+      <Modal
+        isOpen={modalOpen}
+        onClose={handleCloseModal}
+        title="Expense Added Successfully"
+      >
+        <pre>{JSON.stringify(expenseDetails, null, 2)}</pre>
+      </Modal>
+
+      {/* {error && (
+        <div className="mt-4 p-2 bg-red-500 text-white rounded">
+          {error}
+        </div>
+      )} */}
     </div>
   );
 }
