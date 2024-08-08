@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, onOk }) => {
   if (!isOpen) return null;
 
   return (
@@ -13,7 +13,15 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           &times;
         </button>
         <h2 className="text-xl font-bold mb-4">{title}</h2>
-        <div>{children}</div>
+        <div className="mb-4">{children}</div>
+        <div className="flex justify-end space-x-4">
+          <button
+            className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
+            onClick={onOk}
+          >
+            OK
+          </button>
+        </div>
       </div>
     </div>
   );

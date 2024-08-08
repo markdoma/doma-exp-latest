@@ -17,6 +17,7 @@ export default function NewExpense() {
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState({});
   const [budgetData, setBudgetData] = useState({});
+  const [mainCategoryData, setMainCategoryData] = useState({});
   const router = useRouter();
   const [formData, setFormData] = useState({
     date: getTodayDate(),
@@ -109,7 +110,7 @@ export default function NewExpense() {
             if (category && main_category) acc[category] = main_category;
             return acc;
           }, {});
-          setBudgetData(parsedData);
+          setMainCategoryData(parsedData);
         } else {
           console.error('Failed to fetch budget data:', data.error);
         }
@@ -122,9 +123,9 @@ export default function NewExpense() {
   }, []);
 
   useEffect(() => {
-    if (formData.category && budgetData[formData.category]) {
+    if (formData.category && budgetData[formData.category] && mainCategoryData[formData.category]) {
       const projectedBudget = budgetData[formData.category];
-      const mainCategory = budgetData[formData.category];
+      const mainCategory = mainCategoryData[formData.category];
       console.log(projectedBudget)
       setFormData((prevData) => ({
         ...prevData,
@@ -133,7 +134,7 @@ export default function NewExpense() {
         // remaining_budget: projectedBudget, // Assuming you want to initialize this as well
       }));
     }
-  }, [formData.category, budgetData]);
+  }, [formData.category, budgetData, mainCategoryData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -166,6 +167,12 @@ export default function NewExpense() {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+
+  const handleOk = () => {
+    setModalOpen(false);
+    // Perform any additional actions on OK button click if needed
+  };
+
 
   const handleGoToReport = () => {
     router.push('/report'); // Navigate to the report page
@@ -263,10 +270,12 @@ export default function NewExpense() {
       <Modal
         isOpen={modalOpen}
         onClose={handleCloseModal}
+        onOk={handleOk}
         title="Expense Added Successfully"
       >
         <pre>{JSON.stringify(expenseDetails, null, 2)}</pre>
       </Modal>
+
 
       {/* {error && (
         <div className="mt-4 p-2 bg-red-500 text-white rounded">
