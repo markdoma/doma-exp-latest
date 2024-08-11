@@ -27,7 +27,7 @@ export default function NewExpense() {
     main_category: '',
     method: '',
     from: '',
-    budget: '', 
+    budget: '',
     // to_date_expense:'',
     // remaining_budget:''
   });
@@ -67,7 +67,7 @@ export default function NewExpense() {
     fetchCategories();
   }, []);
 
-  
+
   useEffect(() => {
     const fetchBudgetData = async () => {
       try {
@@ -153,7 +153,7 @@ export default function NewExpense() {
       // const result = await response.json();
       console.log(formData)
       // const expense = result.expense; // Adjust based on your API response structure
-      
+
       setExpenseDetails(formData);
       setModalOpen(true); // Open the modal on success
       console.log(expenseDetails)
@@ -170,6 +170,7 @@ export default function NewExpense() {
 
   const handleOk = () => {
     setModalOpen(false);
+    resetForm(); // Reset form values when OK is pressed
     // Perform any additional actions on OK button click if needed
   };
 
@@ -178,10 +179,24 @@ export default function NewExpense() {
     router.push('/report'); // Navigate to the report page
   };
 
+  const resetForm = () => {
+    setFormData({
+      date: getTodayDate(),
+      details: '',
+      category: '',
+      amount: '',
+      main_category: '',
+      method: '',
+      from: '',
+      budget: '',
+      // to_date_expense:'',
+      // remaining_budget:''
+    });
+  };
   return (
     <div className="p-6">
-      
-  
+
+
         <h1 className="text-2xl font-bold mb-4">Add New Expense</h1>
          <button
         onClick={handleGoToReport}
@@ -189,8 +204,8 @@ export default function NewExpense() {
       >
         Go to Report
       </button>
-   
-     
+
+
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col">
